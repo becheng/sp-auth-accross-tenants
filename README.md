@@ -32,6 +32,7 @@ Example url:
       -  client_secret=[secret from Step 2] 
       -  redirect_url=[redirect url from Step 2]
       -  resource="https://management.core.windows.net/"
+  
     **[screen shot here]**
 
 
@@ -42,6 +43,7 @@ Example url:
       -  client_secret=[secret from Step 2] 
       -  redirect_url=[redirect url from Step 2]
       -  resource="https://management.core.windows.net/"
+  
     **[screen shot here]**
 
     ### Azcli Example
@@ -66,4 +68,5 @@ https://management.azure.com/subscriptions/{{SUBSCRIPTION1_ID}}/resourceGroups/{
 https://management.azure.com/subscriptions/{{SUBSCRIPTION2_ID}}/resourceGroups/{{tenant2_resourcegroup}}/providers/Microsoft.Network/virtualNetworks/vnetpeer2/virtualNetworkPeerings/peer2-peer1?api-version=2018-02-01
 ```  
 10. Similarily after completion, we notice a "peer2-peer1" pairing in vnetpeer2 vnet and a Peering status of "Connected" since both pairings have been made.
+    
 **[screen shot here]**   
