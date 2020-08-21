@@ -58,10 +58,12 @@ Example url:
     az account get-access-token
     ```
 ### Issue the Request 
-7. Finally, copy the two access tokens to be used in the Rest API where the primary token is set "Bearer" token for the "Authorization" Header and auxiliary token is set as "Bearer" token for the "x-ms-authorization-auxiliary" Header.
+7. Finally, copy the two access tokens to be used in the Rest API where the primary token is set as the "Bearer" token for the "Authorization" Header and auxiliary token where that is set as "Bearer" token for the "x-ms-authorization-auxiliary" Header.
 ```
 https://management.azure.com/subscriptions/{{SUBSCRIPTION1_ID}}/resourceGroups/{{tenant1_resourcegroup}}/providers/Microsoft.Network/virtualNetworks/vnetpeer1/virtualNetworkPeerings/peer1-peer2?api-version=2018-02-01
 ```
+**[screen shot here]**
+
 8. After completion of the request from vnetpeer1 (tenant1) to the vnetpeer2 (tenant2) we notice a "peer1-peer2" paring in the vnetpeer1 vnet with a Pairing status of "Initiated".
 9. Perform the same call but in reverse from vnet2 to vnet1.
 ```
@@ -70,3 +72,10 @@ https://management.azure.com/subscriptions/{{SUBSCRIPTION2_ID}}/resourceGroups/{
 10. Similarily after completion, we notice a "peer2-peer1" pairing in vnetpeer2 vnet and a Peering status of "Connected" since both pairings have been made.
     
 **[screen shot here]**   
+
+### Postman Code Sample  
+The [Postman Collection](./SP%20auth%20accross%20multiple%20tenants.postman_collection.json) that holds all the requests along with the [Postman Environment](./SP%20auth%20accross%20tenants.postman_environment.json) for all the variables used in the request can be found as part of this repo.  Downloading these will allow your run this sample using your values on your own local Postman.  
+
+### References
+- https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/authenticate-multi-tenant
+- https://medium.com/@ArsenVlad/azure-vnet-peering-across-azure-active-directory-tenants-using-service-principal-authentication-13c52d3190ab 

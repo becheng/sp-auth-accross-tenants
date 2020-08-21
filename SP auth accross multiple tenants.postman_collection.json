@@ -1,0 +1,323 @@
+{
+	"info": {
+		"_postman_id": "ebfe0533-3640-499d-8945-8bdde7b68d8a",
+		"name": "SP auth accross multiple tenants",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "[static URL] Consent to Tenant 1 SP in Tenant 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ba66e7de-a768-4716-9ff6-cf980a8ecb10",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "URL Format:\r\nhttps://login.microsoftonline.com/{{TENANT2_ID}}/oauth2/authorize?client_id={{CLIENT_ID_OF_MULTI_TENATED_APPLICATION}}&response_type=code&redirect_uri=https://localhost:1234/\r\n\r\n"
+				},
+				"url": {
+					"raw": "https://login.microsoftonline.com/{{TENANT2_ID}}/oauth2/authorize?client_id={{CLIENT_ID_OF_MULTI_TENATED_APPLICATION}}&response_type=code&redirect_uri=http%3A%2F%2Flocalhost:1234%2F",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						"{{TENANT2_ID}}",
+						"oauth2",
+						"authorize"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "{{CLIENT_ID_OF_MULTI_TENATED_APPLICATION}}"
+						},
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "http%3A%2F%2Flocalhost:1234%2F"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get access token from Tenant 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c2123bd9-c294-4ec6-bf79-afbf299b227d",
+						"exec": [
+							"var json = JSON.parse(responseBody);\r",
+							"pm.environment.set(\"tenant1_accessToken\", json.access_token);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "redirect_url",
+							"value": "https://localhost:1234/",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "ULxe5U5HoTJJ-0xtr9fA1R62_e8xh~0-qG",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{CLIENT_ID_OF_MULTI_TENATED_APPLICATION}}",
+							"type": "text"
+						},
+						{
+							"key": "resource",
+							"value": "https://management.core.windows.net/",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.microsoftonline.com/{{TENANT1_ID}}/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						"{{TENANT1_ID}}",
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get access token from Tenant 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "486073dd-026d-46d4-94c9-d6b05a3be4d2",
+						"exec": [
+							"var json = JSON.parse(responseBody);\r",
+							"pm.environment.set(\"tenant2_accessToken\", json.access_token);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{CLIENT_ID_OF_MULTI_TENATED_APPLICATION}}",
+							"type": "text"
+						},
+						{
+							"key": "redirect_url",
+							"value": "https://localhost:1234/",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "ULxe5U5HoTJJ-0xtr9fA1R62_e8xh~0-qG",
+							"type": "text"
+						},
+						{
+							"key": "resource",
+							"value": "https://management.core.windows.net/",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.microsoftonline.com/{{TENANT2_ID}}/oauth2/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						"{{TENANT2_ID}}",
+						"oauth2",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create VNet Peering using Primary and Aux Tokens from Tenant 1 to Tenant 2",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tenant1_accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "x-ms-authorization-auxiliary",
+						"type": "text",
+						"value": "Bearer {{tenant2_accessToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"properties\": {\r\n        \"allowVirtualNetworkAccess\": true,\r\n        \"allowForwardedTraffic\": false,\r\n        \"allowGatewayTransit\": false,\r\n        \"useRemoteGateways\": false,\r\n        \"remoteVirtualNetwork\": {\r\n            \"id\": \"/subscriptions/{{SUBSCRIPTION2_ID}}/resourceGroups/{{tenant2_resourcegroup}}/providers/Microsoft.Network/virtualNetworks/vnetpeer2\"\r\n        }\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://management.azure.com/subscriptions/{{SUBSCRIPTION1_ID}}/resourceGroups/{{tenant1_resourcegroup}}/providers/Microsoft.Network/virtualNetworks/vnetpeer1/virtualNetworkPeerings/peer1-peer2?api-version=2018-02-01",
+					"protocol": "https",
+					"host": [
+						"management",
+						"azure",
+						"com"
+					],
+					"path": [
+						"subscriptions",
+						"{{SUBSCRIPTION1_ID}}",
+						"resourceGroups",
+						"{{tenant1_resourcegroup}}",
+						"providers",
+						"Microsoft.Network",
+						"virtualNetworks",
+						"vnetpeer1",
+						"virtualNetworkPeerings",
+						"peer1-peer2"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2018-02-01"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create VNet Peering using Primary and Aux Tokens from Tenant 2 to Tenant 1",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{tenant2_accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					},
+					{
+						"key": "x-ms-authorization-auxiliary",
+						"type": "text",
+						"value": "Bearer {{tenant1_accessToken}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"properties\": {\r\n        \"allowVirtualNetworkAccess\": true,\r\n        \"allowForwardedTraffic\": false,\r\n        \"allowGatewayTransit\": false,\r\n        \"useRemoteGateways\": false,\r\n        \"remoteVirtualNetwork\": {\r\n            \"id\": \"/subscriptions/{{SUBSCRIPTION1_ID}}/resourceGroups/{{tenant1_resourcegroup}}/providers/Microsoft.Network/virtualNetworks/vnetpeer1\"\r\n        }\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://management.azure.com/subscriptions/{{SUBSCRIPTION2_ID}}/resourceGroups/{{tenant2_resourcegroup}}/providers/Microsoft.Network/virtualNetworks/vnetpeer2/virtualNetworkPeerings/peer2-peer1?api-version=2018-02-01",
+					"protocol": "https",
+					"host": [
+						"management",
+						"azure",
+						"com"
+					],
+					"path": [
+						"subscriptions",
+						"{{SUBSCRIPTION2_ID}}",
+						"resourceGroups",
+						"{{tenant2_resourcegroup}}",
+						"providers",
+						"Microsoft.Network",
+						"virtualNetworks",
+						"vnetpeer2",
+						"virtualNetworkPeerings",
+						"peer2-peer1"
+					],
+					"query": [
+						{
+							"key": "api-version",
+							"value": "2018-02-01"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
